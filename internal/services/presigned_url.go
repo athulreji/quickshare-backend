@@ -85,3 +85,28 @@ func GeneratePresignedPutUrl(fileName string) (string, error) {
 
 	return presignedRequest.URL, err
 }
+
+// curl -X POST --upload-file ./your-file.txt "PRESIGNED_URL"
+func GeneratePresignedGetUrl(fileId string) (string, error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+	if err != nil {
+		log.Fatalf("unable to load SDK config, %v", err)
+	}
+
+	s3Client := s3.NewFromConfig(cfg)
+	presignClient := s3.NewPresignClient(s3Client)
+
+	presigner := Presigner{
+		PresignClient: presignClient,
+	}
+
+	bucketName := "quickshare-s3"
+	objectKey := fileId
+
+	presignedRequest, err := presigner.GetObject(bucketName, objectKey, 300) // URL valid for 5 minutes
+	if err != nil {
+		log.Fatalf("Failed to generate presigned URL: %v", err)
+	}
+
+	return presignedRequest.URL, err
+}
