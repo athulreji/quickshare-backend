@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"quickshare-backend/internal/models"
 	"quickshare-backend/internal/services"
 )
 
@@ -68,9 +69,18 @@ func AddToDb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Add FileName FileID to db
-
+	//Add FileName, Password to db
+	fileId, err := models.InsertToDb(reqBody.FileName, reqBody.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	//return fileId
-
+	w.Header().Set("Content-Type", "application/json")
+	response := AddToDbResponseBody{
+		FileId: fileId,
+	}
+	responseJson, _ := json.Marshal(response)
+	w.Write(responseJson)
 }

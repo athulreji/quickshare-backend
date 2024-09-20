@@ -22,24 +22,33 @@ func ConnectDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func InsertToDb(db *sql.DB, fileName string, fileId string, password string) error {
-	query := `insert into file_mapping values($1,$2,$3)`
-	_, err := db.Exec(query, fileId, fileName, password)
+func InsertToDb(fileName string, password string) (string, error) {
+	db, err := ConnectDB()
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	query := `insert into file_mapping(filename, password) values($1,$2) returning fileid`
+	var fileId string
+	err2 := db.QueryRow(query, fileName, password).Scan(&fileId)
+	if err2 != nil {
+		return "", err2
+	}
+	return fileId, nil
 }
 
-func UserValidate(db *sql.DB, fileId string, password string) (string, error) {
-	query := `select fileid , filename, password from file_mapping where fileid=$1 and password=$2)`
-	var mapping Mapping
-	err := db.QueryRow(query, fileId, password).Scan(&mapping.fileId, &mapping.fileName, &mapping.password)
+func UserValidate(fileId string, password string) (string, error) {
+	db, err := ConnectDB()
 	if err != nil {
-		if err == sql.ErrNoRows {
+		return "", err
+	}
+	query := `select fileid::TEXT , filename, password from file_mapping where fileid=$1 and password=$2)`
+	var mapping Mapping
+	err2 := db.QueryRow(query, fileId, password).Scan(&mapping.fileId, &mapping.fileName, &mapping.password)
+	if err2 != nil {
+		if err2 == sql.ErrNoRows {
 			return "", fmt.Errorf("user not found")
 		}
-		return "", fmt.Errorf("error querying user by ID: %w", err)
+		return "", fmt.Errorf("error querying user by ID: %w", err2)
 	}
 	return mapping.fileName, nil
 }

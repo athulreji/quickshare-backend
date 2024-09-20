@@ -9,6 +9,6 @@ type GenerateGetUrlResponseBody struct {
 	FileName     string `json:"fileName"`
 }
 
-type AddPasswordResponseBody struct {
+type AddToDbResponseBody struct {
 	FileId string `json:"fileId"`
 }
