@@ -10,8 +10,10 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", api.HomeHandler)
-	mux.HandleFunc("/generate_post_url", api.GeneratePostUrlHandler)
+	mux.HandleFunc("/generate_put_url", api.GeneratePutUrlHandler)
+	mux.HandleFunc("/generate_get_url", api.GenerateGetUrlHandler)
+	mux.HandleFunc("/add_to_db", api.AddToDbHandler)
 
-	fmt.Println("Starting server on :8080")
+	fmt.Println("Starting server on :5000")
 	http.ListenAndServe(":5000", mux)
 }

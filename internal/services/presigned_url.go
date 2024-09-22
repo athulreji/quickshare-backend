@@ -62,7 +62,7 @@ func (presigner Presigner) DeleteObject(bucketName string, objectKey string) (*v
 }
 
 // curl -X PUT --upload-file ./your-file.txt "PRESIGNED_URL"
-func GeneratePresignedPutUrl(fileName string) (string, error) {
+func GeneratePresignedPutUrl(fileId string) (string, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)
@@ -76,7 +76,7 @@ func GeneratePresignedPutUrl(fileName string) (string, error) {
 	}
 
 	bucketName := "quickshare-s3"
-	objectKey := fileName
+	objectKey := fileId
 
 	presignedRequest, err := presigner.PutObject(bucketName, objectKey, 300) // URL valid for 5 minutes
 	if err != nil {

@@ -1,6 +1,7 @@
 package api
 
-type GeneratePostUrlResponseBody struct {
+type GeneratePutUrlResponseBody struct {
+	FileId       string `json:"fileId"`
 	PresignedUrl string `json:"presignedUrl"`
 }
 
@@ -10,5 +11,5 @@ type GenerateGetUrlResponseBody struct {
 }
 
 type AddToDbResponseBody struct {
-	FileId string `json:"fileId"`
+	Status string `json:"status"`
 }
